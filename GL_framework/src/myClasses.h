@@ -47,13 +47,17 @@ extern float gravity;
 class Particle {
 	friend class particleManager;
 	
-	vec3 position;	
+	vec3 position;
+	vec3 inicalPos;
+	vec3 k; //wave vector
+	GLfloat frequency;
+	GLfloat A; //Amplitud
+	GLfloat waveLength;  //lambda
+	GLfloat time;
 
-	float elasticCoef;
-	float frictionCoef;	
 public:
 	
-	Particle(vec3 pos, float eC, float fC);
+	Particle(vec3 pos, vec3 waveVector);
 	
 	void Move(float dt);
 	//void DetectSphere(vec3 centreEsfera, float radius, float dt);
@@ -65,24 +69,28 @@ class particleManager {
 
 		
 public:	
-	float elasticCoef;
-	float frictionCoef;
+	GLfloat elasticCoef;
+	GLfloat frictionCoef;
 	
-	float lHorizontal;
-	float lVertical;
+	GLfloat lHorizontal;
+	GLfloat lVertical;
 	
-	float gravity;
+	GLfloat gravity;
+
+	GLfloat frequency;
+	GLfloat A; //Amplitud
+	GLfloat waveLength;  //lambda
 
 	//vec3 wallNormals[6];
 	//int wallDs[6];
 	std::vector<Particle> particles;
-	void Update(float dt);
-	//void CalculateForces();
+	void Update(GLfloat dt);
+	
 };
 
 struct Esfera {
 	vec3 position;
-	float radius;
+	GLfloat radius;
 	
 };
 

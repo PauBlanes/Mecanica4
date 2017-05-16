@@ -15,8 +15,14 @@ static float resertTime=20;
 float Second;
 //Gravity
 static float GravityAccel[3] = { 0.0f, -9.81f,0.0f };
-//k
-static float linkDistance[2] = { 0.8, 0.6 };
+//dist particules
+static float linkDistance[2] = { 0.6, 0.77 };
+
+//variables aigua
+static float A = 0.6;
+static float lambda = .5;
+static float frequency = .5;
+
 //collisions
 static bool collisions = true;
 static bool sphereCollisions = false;
@@ -42,6 +48,13 @@ void GUI() {
 
 		//Link distance
 		ImGui::InputFloat2("Particle distance", linkDistance);
+
+		//variables onades
+		if (ImGui::CollapsingHeader("Variables onades")) {
+			ImGui::DragFloat("Amplitude", &A, 0.3);
+			ImGui::DragFloat("Frequency", &frequency, 0.3);
+			ImGui::DragFloat("Distancia entre crestes", &lambda, 0.3);
+		}
 			
 		//Collisions
 		if (ImGui::CollapsingHeader("Collisions")) {
@@ -69,11 +82,15 @@ void PhysicsInit() {
 	pM.lHorizontal = linkDistance[0];
 	pM.lVertical = linkDistance[1];
 	pM.gravity = GravityAccel[1];
+	pM.A = A;
+	pM.frequency = frequency;
+	pM.waveLength = lambda;
+
 
 	//crear malla
 	for (int i = 0; i < 18;i++) {
 		for (int j = 0; j < 14;j++) {
-				Particle temp({ -5 + pM.lVertical*j, 2, -5 + i*pM.lHorizontal }, ElasticCoeff, FrictionCoeff);
+				Particle temp({ -5 + pM.lVertical*j, 2, -5 + i*pM.lHorizontal }, vec3(1,0,0));
 				pM.particles.push_back(temp);
 						
 		}			
@@ -114,12 +131,18 @@ void PhysicsInit() {
 }
 void PhysicsUpdate(float dt) {
 	if (Play_simulation) {
-		for (int i = 0; i < pM.particles.size();i++) {
-			pM.elasticCoef = ElasticCoeff;
-			pM.frictionCoef = FrictionCoeff;
+
+		//actualitzar variables
+		pM.A = A;
+		pM.frequency = frequency;
+		pM.waveLength = lambda;
+		pM.gravity = GravityAccel[1];
+		
+		//Detectar colisions ensfera
+		//for (int i = 0; i < pM.particles.size();i++) {			
 			//if (sphereCollisions)
 				//pM.particles[i].DetectSphere(esfera.position, esfera.radius, dt);
-		}
+		//}
 		for (int i = 0; i < 10;i++) {
 			pM.Update(dt/10);
 		}

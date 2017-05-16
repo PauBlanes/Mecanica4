@@ -6,18 +6,24 @@ int NumPrticles = 0;
 
 float* partVerts = new float[LilSpheres::maxParticles * 3];
 
-Particle::Particle(vec3 pos, float eC, float fC) {
+Particle::Particle(vec3 pos, vec3 waveVector) {
 
+	inicalPos = pos;
 	position = pos;
-		
-	//posem els coeficients
-	elasticCoef = eC;
-	frictionCoef = fC;
-
-
+	time = 0;
+	k = waveVector;
+	
 };
 void Particle::Move(float dt) {
-		
+
+	time += dt;
+
+	GLfloat kMagnitude = (2 * 3.1415 / waveLength);
+	GLfloat w = 2 * 3.141516*frequency;
+
+	position.x = (inicalPos - (k / (GLfloat)kMagnitude)*A*sin(dot(k,inicalPos) - w*time)).x;
+	position.y = inicalPos.y + A*cos(dot(k,inicalPos) - w*time);
+	position.z = (inicalPos - (k / (GLfloat)kMagnitude)*A*sin(dot(k, inicalPos) - w*time)).z;
 }
 /*
 void Particle::DetectWall(vec3 n, int d, float dt) {
@@ -79,7 +85,7 @@ void Particle::DetectSphere(vec3 centreEsfera, float radius, float dt) {
 
 
 //MANAGER
-void particleManager::Update(float dt) {
+void particleManager::Update(GLfloat dt) {
 
 	//actualitzar el array de vertexs
 	for (int i = 0; i < particles.size(); ++i) {
@@ -88,9 +94,11 @@ void particleManager::Update(float dt) {
 		//	particles[i].DetectWall(wallNormals[j], wallDs[j], dt);
 		//}		
 
+		particles[i].A = A;
+		particles[i].waveLength = waveLength;
+		particles[i].frequency = frequency;
 		particles[i].Move(dt);
-		particles[i].elasticCoef = elasticCoef;
-		particles[i].frictionCoef = frictionCoef;
+		
 
 		partVerts[i * 3 + 0] = particles[i].position.x;
 		partVerts[i * 3 + 1] = particles[i].position.y;

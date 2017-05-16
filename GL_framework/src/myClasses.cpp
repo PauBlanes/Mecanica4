@@ -3,27 +3,42 @@
 
 
 int NumPrticles = 0;
+GLfloat numWaves = 2;
 
 float* partVerts = new float[LilSpheres::maxParticles * 3];
 
-Particle::Particle(vec3 pos, vec3 waveVector) {
+Particle::Particle(vec3 pos) {
 
 	inicalPos = pos;
 	position = pos;
 	time = 0;
-	k = waveVector;
+	
+	ks.push_back({ 1,0,0 });
+	ks.push_back({ 0,0,-3 });
+	As.push_back(0.5);
+	As.push_back(0.25);
+	frequencies.push_back(1/3.141516);
+	frequencies.push_back(1/(2*3.141516));
+	phis.push_back(0);
+	phis.push_back(0.5);
 	
 };
 void Particle::Move(float dt) {
 
-	time += dt;
+	time += dt;	
+	vec3 sumatoriXZ;
+	GLfloat sumatoriY = 0;
 
-	GLfloat kMagnitude = (2 * 3.1415 / waveLength);
-	GLfloat w = 2 * 3.141516*frequency;
+	//Fem el sumatori
+	for (int i = 0; i < 2;i++) {
+		GLfloat w = 2 * 3.141516*frequencies[i];
+		sumatoriXZ += normalize(ks[i])*As[i] * sin(dot(ks[i], inicalPos) - w*time + phis[i]);
+		sumatoriY += As[i] * cos(dot(ks[i], inicalPos) - w*time + phis[i]);
+	}
 
-	position.x = (inicalPos - (k / (GLfloat)kMagnitude)*A*sin(dot(k,inicalPos) - w*time)).x;
-	position.y = inicalPos.y + A*cos(dot(k,inicalPos) - w*time);
-	position.z = (inicalPos - (k / (GLfloat)kMagnitude)*A*sin(dot(k, inicalPos) - w*time)).z;
+	position.x = (inicalPos - sumatoriXZ).x;
+	position.y = inicalPos.y + sumatoriY;
+	position.z = (inicalPos - sumatoriXZ).z;
 }
 /*
 void Particle::DetectWall(vec3 n, int d, float dt) {
@@ -94,9 +109,6 @@ void particleManager::Update(GLfloat dt) {
 		//	particles[i].DetectWall(wallNormals[j], wallDs[j], dt);
 		//}		
 
-		particles[i].A = A;
-		particles[i].waveLength = waveLength;
-		particles[i].frequency = frequency;
 		particles[i].Move(dt);
 		
 

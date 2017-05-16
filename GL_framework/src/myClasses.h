@@ -17,7 +17,9 @@
 extern bool renderSphere;
 extern bool renderParticles;
 using namespace glm;
+using namespace std;
 struct coords { float x; float y; float z; };
+
 
 namespace LilSpheres {
 	extern const int maxParticles;
@@ -42,6 +44,7 @@ namespace ClothMesh {
 }
 
 extern float* partVerts;
+extern GLfloat numWaves;
 extern float gravity;
 
 class Particle {
@@ -49,15 +52,15 @@ class Particle {
 	
 	vec3 position;
 	vec3 inicalPos;
-	vec3 k; //wave vector
-	GLfloat frequency;
-	GLfloat A; //Amplitud
-	GLfloat waveLength;  //lambda
+	vector <vec3> ks; //wave vector
+	vector <GLfloat> frequencies;
+	vector <GLfloat> As; //Amplitud
+	vector <GLfloat> phis;
 	GLfloat time;
 
 public:
 	
-	Particle(vec3 pos, vec3 waveVector);
+	Particle(vec3 pos);
 	
 	void Move(float dt);
 	//void DetectSphere(vec3 centreEsfera, float radius, float dt);
@@ -76,10 +79,6 @@ public:
 	GLfloat lVertical;
 	
 	GLfloat gravity;
-
-	GLfloat frequency;
-	GLfloat A; //Amplitud
-	GLfloat waveLength;  //lambda
 
 	//vec3 wallNormals[6];
 	//int wallDs[6];

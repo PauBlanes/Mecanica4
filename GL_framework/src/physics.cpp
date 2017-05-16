@@ -82,15 +82,11 @@ void PhysicsInit() {
 	pM.lHorizontal = linkDistance[0];
 	pM.lVertical = linkDistance[1];
 	pM.gravity = GravityAccel[1];
-	pM.A = A;
-	pM.frequency = frequency;
-	pM.waveLength = lambda;
-
-
+	
 	//crear malla
 	for (int i = 0; i < 18;i++) {
 		for (int j = 0; j < 14;j++) {
-				Particle temp({ -5 + pM.lVertical*j, 2, -5 + i*pM.lHorizontal }, vec3(1,0,0));
+				Particle temp({ -5 + pM.lVertical*j, 2, -5 + i*pM.lHorizontal });
 				pM.particles.push_back(temp);
 						
 		}			
@@ -133,9 +129,6 @@ void PhysicsUpdate(float dt) {
 	if (Play_simulation) {
 
 		//actualitzar variables
-		pM.A = A;
-		pM.frequency = frequency;
-		pM.waveLength = lambda;
 		pM.gravity = GravityAccel[1];
 		
 		//Detectar colisions ensfera

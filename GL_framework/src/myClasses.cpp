@@ -20,7 +20,7 @@ Particle::Particle(vec3 pos) {
 	frequencies.push_back(1/3.141516);
 	frequencies.push_back(1/(2*3.141516));
 	phis.push_back(0);
-	phis.push_back(0.5);
+	phis.push_back(0.25);
 	
 };
 void Particle::Move(float dt) {

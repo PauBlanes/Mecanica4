@@ -808,7 +808,7 @@ void drawClothMesh() {
 	glUseProgram(clothProgram);
 	glUniformMatrix4fv(glGetUniformLocation(clothProgram, "mvpMat"), 1, GL_FALSE, glm::value_ptr(_MVP));
 	glUniform4f(glGetUniformLocation(clothProgram, "color"), 0.1f, 1.f, 1.f, 0.f);
-	glDrawElements(GL_LINE_LOOP, numVirtualVerts, GL_UNSIGNED_BYTE, 0);
+	glDrawElements(GL_LINE_LOOP, numVirtualVerts, GL_UNSIGNED_BYTE, 0); //per pintar canviar el GL_LINE LOOP
 
 	glUseProgram(0);
 	glBindVertexArray(0);

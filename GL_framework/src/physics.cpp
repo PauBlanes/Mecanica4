@@ -25,7 +25,7 @@ static float frequency = .5;
 
 //collisions
 static bool collisions = true;
-static bool sphereCollisions = false;
+static bool sphereCollisions = true;
 static float ElasticCoeff=0.1;
 static float FrictionCoeff=0.1;
 
@@ -81,7 +81,7 @@ void PhysicsInit() {
 	//actualitzar variables del GUI
 	pM.lHorizontal = linkDistance[0];
 	pM.lVertical = linkDistance[1];
-	pM.gravity = GravityAccel[1];
+	gravity = GravityAccel[1];
 	
 	//crear malla
 	for (int i = 0; i < 18;i++) {
@@ -97,15 +97,16 @@ void PhysicsInit() {
 
 	float min = 2;
 	float max = 4;
+	
+	
+	GLfloat tempRadius = .5;
+	min = -4 + tempRadius;
+	max = 4 - tempRadius;
 
-	esfera.radius = rand() % (int)(max - min) + min;
-
-	min = -4 + esfera.radius;
-	max = 4 - esfera.radius;
-
-	esfera.position.x = min + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (max - min)));
-	esfera.position.y = (min+4) + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (max - min)));
-	esfera.position.z = min + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (max - min)));
+	vec3 tempPos;
+	tempPos.x = min + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (max - min)));
+	tempPos.y = 8;
+	tempPos.z = min + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (max - min)));
 	
 
 	//els murs
@@ -122,27 +123,28 @@ void PhysicsInit() {
 	pM.wallDs[4] = 5;
 	pM.wallDs[5] = -5;*/
 
-	//Sphere::updateSphere(esfera.position, esfera.radius);
+	esfera.SetVars(tempPos, tempRadius, 1, 2);
+	Sphere::updateSphere(esfera.GetPos(), esfera.GetRadius());
 
 }
 void PhysicsUpdate(float dt) {
 	if (Play_simulation) {
 
 		//actualitzar variables
-		pM.gravity = GravityAccel[1];
-		
-		//Detectar colisions ensfera
-		//for (int i = 0; i < pM.particles.size();i++) {			
-			//if (sphereCollisions)
-				//pM.particles[i].DetectSphere(esfera.position, esfera.radius, dt);
-		//}
+		gravity = GravityAccel[1];
+
 		for (int i = 0; i < 10;i++) {
 			pM.Update(dt/10);
 		}
 		//Pintar
 		ClothMesh::updateClothMesh(partVerts);
-		if (sphereCollisions)
-			renderSphere = true;
+		if (sphereCollisions) {
+			if (!renderSphere)
+				renderSphere = true;
+			esfera.CalculateBuoyancy();
+			esfera.Update(dt);
+			Sphere::updateSphere(esfera.GetPos(), esfera.GetRadius());
+		}			
 		else
 			renderSphere = false;
 

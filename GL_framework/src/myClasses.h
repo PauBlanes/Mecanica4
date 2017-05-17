@@ -69,8 +69,7 @@ public:
 
 
 class particleManager {
-
-		
+			
 public:	
 	GLfloat elasticCoef;
 	GLfloat frictionCoef;
@@ -78,8 +77,6 @@ public:
 	GLfloat lHorizontal;
 	GLfloat lVertical;
 	
-	GLfloat gravity;
-
 	//vec3 wallNormals[6];
 	//int wallDs[6];
 	std::vector<Particle> particles;
@@ -87,10 +84,22 @@ public:
 	
 };
 
-struct Esfera {
-	vec3 position;
+class Esfera {
+
+	vec3 position;	
+	vec3 velocity;
+	vec3 force;
 	GLfloat radius;
+	GLfloat mass;
+	GLfloat waterHeight;
 	
+public:
+	
+	void SetVars(vec3 pos, GLfloat rad, GLfloat massa, GLfloat wH);
+	void Update(GLfloat deltaTime);
+	void CalculateBuoyancy();
+	vec3 GetPos();
+	GLfloat GetRadius();
 };
 
 

@@ -77,8 +77,6 @@ public:
 	GLfloat lHorizontal;
 	GLfloat lVertical;
 	
-	//vec3 wallNormals[6];
-	//int wallDs[6];
 	std::vector<Particle> particles;
 	void Update(GLfloat dt);
 	

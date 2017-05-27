@@ -8,6 +8,8 @@ GLfloat numWaves = 2;
 float* partVerts = new float[LilSpheres::maxParticles * 3];
 float gravity;
 
+
+
 Particle::Particle(vec3 pos) {
 
 	inicalPos = pos;
@@ -71,7 +73,7 @@ void Esfera::Update(GLfloat deltaTime) {
 }
 
 void Esfera::CalculateBuoyancy() {
-	if (position.y - radius < waterHeight) {
+	if (position.y - radius < waterHeight) {		
 		GLfloat volumeUnderwater = pow(radius*2,3) * clamp(((waterHeight-(position.y-radius)/(radius*2))), 0.f, 1.f);
 		vec3 Fbuoyancy = 5.f * 9.8f * volumeUnderwater * vec3(0,1,0);
 		force += Fbuoyancy;
@@ -85,6 +87,41 @@ vec3 Esfera::GetPos() {
 
 GLfloat Esfera::GetRadius() {
 	return radius;
+}
+
+void Esfera::SetMass(GLfloat m) {
+	mass = m;
+}
+
+void Esfera::CalculateWaterHeight(vector <Particle> p) {
+	//les alçades de les 4 particules
+	Particle nearestXP = p[0];
+	Particle nearestX2P = p[0];
+	Particle nearestZP = p[0];
+	Particle nearestZ2P = p[0];
+
+	//trobar les alçades de les 4 mes properes
+	for (int i = 0; i < p.size();i++) {
+		//Comprovacions en X
+		if (abs(p[i].position.x - position.x) < abs(nearestX2P.position.x - position.x)) { //si esta mes a prop que la segona mes propera
+			nearestX2P = p[i];
+			if (abs(p[i].position.x - position.x) < abs(nearestXP.position.x - position.x)) { //si esta mes a prop que la mes propera
+				nearestX2P = nearestXP;
+				nearestXP = p[i];
+			}
+		}
+		//Comprovacions en Z
+		if (abs(p[i].position.z - position.z) < abs(nearestZ2P.position.z - position.z)) { //si esta mes a prop que la segona mes propera
+			nearestZ2P = p[i];
+			if (abs(p[i].position.z - position.z) < abs(nearestZP.position.z - position.z)) { //si esta mes a prop que la mes propera
+				nearestZ2P = nearestZP;
+				nearestZP = p[i];
+			}
+		}
+	}
+
+	//fem la mitja per obtenir una alçada de l'aigua més precisa
+	waterHeight = (nearestXP.position.y + nearestX2P.position.y + nearestZP.position.y + nearestZ2P.position.y) / 4;	
 }
 
 

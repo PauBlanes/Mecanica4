@@ -29,6 +29,9 @@ static bool sphereCollisions = true;
 static float ElasticCoeff=0.1;
 static float FrictionCoeff=0.1;
 
+//massa esfera
+static float sphereMass = 1.0;
+
 void GUI() {
 	{	//FrameRate
 		ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
@@ -45,6 +48,7 @@ void GUI() {
 		//Resert Time
 		ImGui::DragFloat("Resert Time", &resertTime, 20); 
 		ImGui::InputFloat3("Gravity Accel", GravityAccel);
+		ImGui::DragFloat("Massa esfera", &sphereMass, 1);
 
 		//Link distance
 		ImGui::InputFloat2("Particle distance", linkDistance);
@@ -82,7 +86,8 @@ void PhysicsInit() {
 	pM.lHorizontal = linkDistance[0];
 	pM.lVertical = linkDistance[1];
 	gravity = GravityAccel[1];
-	
+	esfera.SetMass(sphereMass);
+
 	//crear malla
 	for (int i = 0; i < 18;i++) {
 		for (int j = 0; j < 14;j++) {
@@ -109,20 +114,6 @@ void PhysicsInit() {
 	tempPos.z = min + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (max - min)));
 	
 
-	//els murs
-	/*pM.wallNormals[0] = { 0,1,0 };
-	pM.wallNormals[1] = { 0,-1,0 };
-	pM.wallNormals[2] = { 1,0,0 };
-	pM.wallNormals[3] = { -1,0,0 };
-	pM.wallNormals[4] = { 0,0,1 };
-	pM.wallNormals[5] = { 0,0,-1 };
-	pM.wallDs[0] = 0;
-	pM.wallDs[1] = 10;
-	pM.wallDs[2] = -5;
-	pM.wallDs[3] = 5;
-	pM.wallDs[4] = 5;
-	pM.wallDs[5] = -5;*/
-
 	esfera.SetVars(tempPos, tempRadius, 1, 2);
 	Sphere::updateSphere(esfera.GetPos(), esfera.GetRadius());
 
@@ -132,15 +123,19 @@ void PhysicsUpdate(float dt) {
 
 		//actualitzar variables
 		gravity = GravityAccel[1];
+		esfera.SetMass(sphereMass);
 
+		//calcular posicions particules
 		for (int i = 0; i < 10;i++) {
 			pM.Update(dt/10);
 		}
-		//Pintar
+		//Pintar malla
 		ClothMesh::updateClothMesh(partVerts);
+		//Esfera
 		if (sphereCollisions) {
 			if (!renderSphere)
 				renderSphere = true;
+			esfera.CalculateWaterHeight(pM.particles);
 			esfera.CalculateBuoyancy();
 			esfera.Update(dt);
 			Sphere::updateSphere(esfera.GetPos(), esfera.GetRadius());

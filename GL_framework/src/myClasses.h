@@ -49,7 +49,8 @@ extern float gravity;
 
 class Particle {
 	friend class particleManager;
-	
+	friend class Esfera;
+
 	vec3 position;
 	vec3 inicalPos;
 	vector <vec3> ks; //wave vector
@@ -59,12 +60,8 @@ class Particle {
 	GLfloat time;
 
 public:
-	
-	Particle(vec3 pos);
-	
-	void Move(float dt);
-	//void DetectSphere(vec3 centreEsfera, float radius, float dt);
-	
+	Particle(vec3 pos);	
+	void Move(float dt);	
 };
 
 
@@ -89,8 +86,7 @@ class Esfera {
 	vec3 force;
 	GLfloat radius;
 	GLfloat mass;
-	GLfloat waterHeight;
-	
+	GLfloat waterHeight;	
 public:
 	
 	void SetVars(vec3 pos, GLfloat rad, GLfloat massa, GLfloat wH);
@@ -98,6 +94,8 @@ public:
 	void CalculateBuoyancy();
 	vec3 GetPos();
 	GLfloat GetRadius();
+	void SetMass(GLfloat m);
+	void CalculateWaterHeight(vector <Particle> p);
 };
 
 
